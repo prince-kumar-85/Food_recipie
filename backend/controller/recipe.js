@@ -1,13 +1,21 @@
 const Recipe = require("../models/recipe");
+
+
 const getRecipes= async(req,res)=>{ // get all the recipes from the database..............
     const result= await Recipe.find();
     return res.json(result);
 }
+
+
+
 const getRecipe=async(req,res)=>{  // get a single recipe by id..............    here do want you want to do like if u wnat to find it by id or by title or by ingredients or by instructions or by time or by coverImage
     const result=await Recipe.findById(req.params.id)
     return res.json(result);
 }
-const addRecipe=async(req,res)=>{
+
+
+
+const addRecipe=async(req,res)=>{  // add a recipe to the database..............
     const {title,ingredients,instructions, time , coverImage}=req.body
 
     if(!title || !instructions || !ingredients || !time ){
@@ -27,7 +35,10 @@ const addRecipe=async(req,res)=>{
     // }
     // return res.status(201).json({ message: "Recipe created successfully" });
 }
-const editRecipe = async (req, res) => {
+
+
+
+const editRecipe = async (req, res) => { // edit a recipe in the database..............
     const { title, ingredients, instructions, time, coverImage } = req.body;
 
     try {
@@ -49,8 +60,16 @@ const editRecipe = async (req, res) => {
     }
 };
 
-const deleteRecipe=(req,res)=>{
-    res.json({ message: "Welcome to the recipe controller!" });
+const deleteRecipe=(req,res)=>{ // delete a recipe from the database..............
+    const { id } = req.params;
+    Recipe.findByIdAndDelete(id)
+        .then(() => {
+            res.status(200).json({ message: "Recipe deleted successfully" });
+        })
+        .catch((error) => {
+            res.status(500).json({ message: error.message });
+        });
+    
 }
 
 module.exports={
