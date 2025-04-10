@@ -1,18 +1,13 @@
 import React from 'react'
 
-function Model({children,onClose}) {
+export default function Modal({children, onClose}) {
   return (
     <>
-    <div className='backdrop' onClick={onClose}>
-        <dialog className='modal'  open>
-            {children}
-
+        <div className='backdrop'onClick={onClose}></div>
+            <dialog className='modal' open>
+                {children}
             </dialog>
-
-    </div>
-      
+        
     </>
   )
 }
-
-export default Model

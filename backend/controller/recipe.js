@@ -1,44 +1,60 @@
 const Recipe = require("../models/recipe");
+const multer = require("multer");
+const path = require("path");
 
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, "./public/images");
+    },
+    filename: function (req, file, cb) {
+        const ext = path.extname(file.originalname);
+        const filename = Date.now() + "-" + Math.round(Math.random() * 1E9) + ext;
+        cb(null, filename);
+    },
+});
+const upload = multer({ storage: storage });
 
-const getRecipes= async(req,res)=>{ // get all the recipes from the database..............
-    const result= await Recipe.find();
-    return res.json(result);
-}
-
-
-
-const getRecipe=async(req,res)=>{  // get a single recipe by id..............    here do want you want to do like if u wnat to find it by id or by title or by ingredients or by instructions or by time or by coverImage
-    const result=await Recipe.findById(req.params.id)
-    return res.json(result);
-}
-
-
-
-const addRecipe=async(req,res)=>{  // add a recipe to the database..............
-    const {title,ingredients,instructions, time , coverImage}=req.body
-
-    if(!title || !instructions || !ingredients || !time ){
-        return res.status(400).json({ message: "Please fill all the fields" });
+const getRecipes = async (req, res) => {
+    try {
+        const result = await Recipe.find();
+        return res.json(result);
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
     }
+};
 
-    const newRecipe=await Recipe.create({
-        title,
-        ingredients,
-        instructions,
-        time,
-        coverImage
-    })
-    return res.json(newRecipe); 
-    // if(!newRecipe){
-    //     return res.status(400).json({ message: "Failed to create recipe" });
-    // }
-    // return res.status(201).json({ message: "Recipe created successfully" });
-}
+const getRecipe = async (req, res) => {
+    try {
+        const result = await Recipe.findById(req.params.id);
+        return res.json(result);
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
+    }
+};
 
+const addRecipe = async (req, res) => {
+    try {
+        const { title, ingredients, instructions, time } = req.body;
+        const coverImage = req.file ? req.file.filename : null;
 
+        if (!title || !instructions || !ingredients || !time || !coverImage) {
+            return res.status(400).json({ message: "Please fill all the fields" });
+        }
 
-const editRecipe = async (req, res) => { // edit a recipe in the database..............
+        const newRecipe = await Recipe.create({
+            title,
+            ingredients,
+            instructions,
+            time,
+            coverImage
+        });
+        return res.json(newRecipe);
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
+    }
+};
+
+const editRecipe = async (req, res) => {
     const { title, ingredients, instructions, time, coverImage } = req.body;
 
     try {
@@ -48,7 +64,7 @@ const editRecipe = async (req, res) => { // edit a recipe in the database.......
             const updatedRecipe = await Recipe.findByIdAndUpdate(
                 req.params.id,
                 { title, ingredients, instructions, time, coverImage },
-                { new: true } // return the updated document
+                { new: true }
             );
 
             res.json(updatedRecipe);
@@ -60,7 +76,7 @@ const editRecipe = async (req, res) => { // edit a recipe in the database.......
     }
 };
 
-const deleteRecipe=(req,res)=>{ // delete a recipe from the database..............
+const deleteRecipe = (req, res) => {
     const { id } = req.params;
     Recipe.findByIdAndDelete(id)
         .then(() => {
@@ -69,13 +85,13 @@ const deleteRecipe=(req,res)=>{ // delete a recipe from the database............
         .catch((error) => {
             res.status(500).json({ message: error.message });
         });
-    
-}
+};
 
-module.exports={
+module.exports = {
     getRecipes,
     getRecipe,
     addRecipe,
     editRecipe,
-    deleteRecipe
-}
+    deleteRecipe,
+    upload
+};
