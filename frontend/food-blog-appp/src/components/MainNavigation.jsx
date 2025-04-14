@@ -1,17 +1,14 @@
 import React from 'react'
 import { Outlet } from 'react-router-dom'
+import Footer from './Footer'
 import Navbar from './Navbar'
-import Footer from './Footer'   
 
-function MainNavigation() {
+export default function MainNavigation() {
   return (
-    <>
+   <>
     <Navbar/>
     <Outlet/>
     <Footer/>
-
-    </>
+   </>
   )
 }
-
-export default MainNavigation

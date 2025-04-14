@@ -5,6 +5,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import MainNavigation from './components/MainNavigation'
 import axios from 'axios'
 import AddFoodRecipe from './Pages/AddFoodRecipe'
+import EditRecipe from './Pages/EditRecipe'
 
 // Fetching all recipes from the server
 const getAllRecipes = async () => {
@@ -18,6 +19,12 @@ const getAllRecipes = async () => {
   return allRecipes; // Return the data (or an empty array if error occurs)
 };
 
+const getMyRecipe=async()=>{
+  let user=JSON.parse(localStorage.getItem(user))
+  let allRecipes=await getAllRecipes()
+  return allRecipes.filter(item=>item.createdBy===user._id)
+}
+
 // Defining the routes with the loader function
 const router = createBrowserRouter([
   {
@@ -29,9 +36,10 @@ const router = createBrowserRouter([
         element: <Home />,
         loader: getAllRecipes, // Loader function that fetches data
       },
-      { path: "/myRecipe", element: <Home /> },
+      { path: "/myRecipe", element: <Home /> , loader:getMyRecipe}, // Loader function for my recipes},
       { path: "/favRecipe", element: <Home /> },
       { path: "/addRecipe", element: <AddFoodRecipe /> },
+      {path:"/editRecipe/:id",element:<EditRecipe/>}, // Loader function for editing a recipe
     ]
   }
 ]);
