@@ -1,12 +1,14 @@
 import React from 'react'
 import './App.css'
 import {createBrowserRouter,RouterProvider} from "react-router-dom"
-import Home from './pages/Home'
+
 import MainNavigation from './components/MainNavigation'
 import axios from 'axios'
 import  AddFoodRecipe  from './pages/AddFoodRecipe'
 import EditRecipe from './pages/EditRecipe'
-import RecipeDetails from './pages/RecipeDetails'
+// import RecipeDetails from './pages/RecipeDetails'
+import Home from './Pages/Home'
+import RecipeDetails from './Pages/RecipeDetails'
 
 
 const getAllRecipes=async()=>{
